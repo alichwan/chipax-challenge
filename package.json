@@ -1,0 +1,18 @@
+{
+  "name": "chipax-rickandmorty",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cross-fetch": "^3.1.5",
+    "express": "^4.18.1",
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.2.9"
+  }
+}
