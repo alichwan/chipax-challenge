@@ -67,15 +67,3 @@ module.exports = {
   episodeLocationsExercise,
   exercisesResponse,
 };
-
-// const testing = () => {
-//   const cathegory = "location";
-//   const frProm = fetch(`${apiRoot}/${cathegory}`)
-//     .then( response => response.json(), "fallauno")
-//   // .then( data => {
-//   //   // data.results.forEach((d) => console.log(charCount("c",d.name)))
-//   //   // console.log(data.info.pages);
-
-//   })
-// }
-// testing()
