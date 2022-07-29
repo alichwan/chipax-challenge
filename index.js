@@ -7,14 +7,6 @@ const apiControllers = require('./controllers/exercises.js');
 
 const app = express();
 
-const extractNames = (lst) => {
-  let aux = new Array();
-  for (const key in lst) {
-    aux.push(lst[key].name)
-  }
-  return aux;
-}
-
 app.get('/', async (req,res) => {
 
   await apiControllers.exercisesResponse()
@@ -24,7 +16,6 @@ app.get('/', async (req,res) => {
     })
     .catch((err) => console.error(err));
 })
-
 
 app.listen(3000, ()=>{
   console.log("API running");
