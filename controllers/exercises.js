@@ -1,120 +1,71 @@
 const fetch = require("cross-fetch");
+const {
+  miniRes,
+  counterFetcher,
+  locsInEpisode,
+  episodeInfo,
+} = require("./utils");
 
 const apiRoot = "https://rickandmortyapi.com/api";
 const timeLimit = 3000;
 
-const charCount = (char, text) => {
-  return text.toLowerCase().split(char).length - 1;
-};
-
-const listToCount = (list, char) => {
-  let counter = 0;
-  list.forEach((d) => {
-    counter += charCount(char, d.name);
-  });
-  return counter;
-};
-
-const counterFetcher = async (char, resource) => {
-  try {
-    const partial = new Array();
-    return fetch(`${apiRoot}/${resource}`)
-      .then((response) => response.json())
-      .then((data) => data.info.pages)
-      .then((nPages) => {
-        for (let i = 1; i <= nPages; i++) {
-          partial.push(
-            fetch(`${apiRoot}/${resource}?page=${i}`)
-              .then((response) => response.json())
-              .then((data) => listToCount(data.results, char))
-          );
-        }
-        return Promise.all(partial);
-      });
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const miniRes = (char, count, resource) => {
-  return {
-    char: char,
-    count: count,
-    resource: resource,
-  };
-};
-
 const charCounterExercise = async () => {
   const results = new Array();
-  console.log("Start char counter");
   const start_exec = new Date();
   //  EXCERCISE
-  const [loc, ep, ch] = await Promise.all([
-    counterFetcher("l", "location"),
-    counterFetcher("e", "episode"),
-    counterFetcher("c", "character"),
-  ]);
-  results.push(
-    miniRes(
-      "l",
-      loc.reduce((a, b) => a + b, 0),
-      "location"
-    )
+  const cases = [
+    { char: "l", resource: "location" },
+    { char: "e", resource: "episode" },
+    { char: "c", resource: "character" },
+  ];
+  const [loc, ep, ch] = await Promise.all(
+    cases.map((c) => counterFetcher(c.char, c.resource, apiRoot))
   );
-  results.push(
-    miniRes(
-      "e",
-      ep.reduce((a, b) => a + b, 0),
-      "episode"
-    )
-  );
-  results.push(
-    miniRes(
-      "c",
-      ch.reduce((a, b) => a + b, 0),
-      "character"
-    )
-  );
-  // END OF EXCERCISE
+  results.push(miniRes("l", loc, "location"));
+  results.push(miniRes("e", ep, "episode"));
+  results.push(miniRes("c", ch, "character"));
   const stop_exec = new Date();
+  // END OF EXCERCISE
   const execTime = stop_exec - start_exec; // miliseconds
   return {
     exercise_name: "Char counter",
-    time: execTime,
+    time: `${execTime/1000} s`,
     in_time: execTime <= timeLimit,
     results: results,
   };
 };
 
-const episodeLocationsExercise = async () => {
+const episodeLocationsExercise = async (episodeId) => {
+  if (episodeId == "all") {
+    return {
+      message: "Please add a episode id in the urls in order to run the excercise"
+    }
+  }
   const results = new Array();
-  console.log("Start episode location");
   const start_exec = new Date();
   //  EXCERCISE
-  await fetch(`${apiRoot}/location`).then((data) => {
-    console.log("testing");
-  });
+  const epInfo = await episodeInfo(episodeId, apiRoot);
+  const locsInEp = await locsInEpisode(episodeId, apiRoot);
+  results.push({...epInfo, locations: locsInEp})
   // END OF EXCERCISE
   const stop_exec = new Date();
   const execTime = stop_exec - start_exec; // miliseconds
   return {
     exercise_name: "Episode locations",
-    time: execTime,
+    time: `${execTime/1000} s`,
     in_time: execTime <= timeLimit,
     results: results,
   };
 };
 
-const exercisesResponse = async () => {
-  const [CCE, ELE] = await Promise.all([
+const exercisesResponse = async (episodeId) => {
+  // We consider an episodeId for the second excercise
+  return Promise.all([
     charCounterExercise(),
-    episodeLocationsExercise(),
+    episodeLocationsExercise(episodeId),
   ]);
-  return [CCE, ELE];
 };
 
 module.exports = {
-  charCounterExercise,
-  episodeLocationsExercise,
   exercisesResponse,
 };
