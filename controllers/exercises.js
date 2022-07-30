@@ -67,5 +67,7 @@ const exercisesResponse = async (episodeId) => {
 };
 
 module.exports = {
+  charCounterExercise,
+  episodeLocationsExercise,
   exercisesResponse,
 };

@@ -24,4 +24,4 @@ In order to run both excercises you must provide a episode id in the url. For ex
 
 ## Tests
 
-Not implemented yet.
+Implemented for some non-asynchronous functions using jest.
